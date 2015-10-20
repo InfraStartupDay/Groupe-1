@@ -1,0 +1,42 @@
+Source IOU
+Probleme :
+Configuration ospf/eigrp unicast/multicast sur le meme domain
+
+Test d'une configuration EIGRP unicast/multicast :
+Si l'on configure un neighbor en static alors qu'ils y a des neighbors découvert en multicast 
+Il faut que le neighbor en static ne soit pas sur la meme interface sinon l'erreur suivante apparait :
+   
+   EIGRP: Ignore multicast Hello Et0/0.300 150.100.3.8
+
+Si l'on configure un neighbor en static sur une interface alors qu'il y a aussi 
+des neighbors en multicast sur cette meme interface ceux en multicast sont ignorer
+
+
+
+R4#sho ip eigrp neighbors detail 
+EIGRP-IPv4 VR(CCIE) Address-Family Neighbors for AS(866)
+H   Address                 Interface              Hold Uptime   SRTT   RTO  Q  Seq
+                                                   (sec)         (ms)       Cnt Num
+2   150.100.3.5             Et0/0.300                13 00:00:25    1   100  0  26
+   Version 8.0/2.0, Retrans: 1, Retries: 0, Prefixes: 2
+   Topology-ids from peer - 0 
+1   150.100.3.7             Et0/0.300                13 00:00:47   65   390  0  23
+   Version 7.0/3.0, Retrans: 0, Retries: 0, Prefixes: 1
+   Topology-ids from peer - 0 
+0   150.100.3.8             Et0/0.300                13 00:00:47   19   114  0  23
+   Version 7.0/3.0, Retrans: 1, Retries: 0, Prefixes: 1
+   Topology-ids from peer - 0 
+3   172.16.0.14             Tu1                      13 00:17:28   27  1440  0  9
+   Static neighbor
+   Version 8.0/2.0, Retrans: 0, Retries: 0
+   Topology-ids from peer - 0 
+  
+
+  
+  Sur OSPF il est aussi possible de mettre des neighbor en static avec des neighbor multicast dans le meme process.
+  Par contre il faut que l'interface avec le neigbor static soit en mode OSPF Point to Point multipoint ou en OSPF NON-BROADCAST
+
+  ip ospf network non-broadcast
+  ip ospf network point-to-multipoint
+   
+   Questions :

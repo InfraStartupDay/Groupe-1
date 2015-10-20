@@ -1,0 +1,64 @@
+Source IOU
+La commande suivante est executer sur R1 :
+
+clear ip eigrp 2 neighbors
+
+Le Packet n 20 est un EIGRP HELLO enovoyé avec un paramétre : Peer termination
+Tout les k values sont set a 255
+Ceci indique un reset des neihbors
+
+R2 et R3 envoie alors directement aprés avoir recu ce paket des EIGRP Query (Packet 21 et 22) avec les reseau 120.100.1.0/24 et 150.100.1.0/24
+Les query sont les messages envoyer pour demander aux autres routeurs qui a une route vers ces réseau (Puisque R1 a reset ces neihbors)
+
+Doc sur les QUERIES : http://packetlife.net/blog/2010/mar/22/understanding-eigrp-queries/
+
+Question : Un UPDATE VIDE sert a demander au routeurs de leur envoyer leur reseau ? 
+
+
+
+(20) R1 -> 	HELLO 		-> MULTICAST_EIGRP (Peer termination)
+(21) R3 -> 	QUERY 		-> MULTICAST_EIGRP (120.100.1.0/24, 150.100.1.0/24)
+(22) R2 -> 	QUERY 		-> MULTICAST_EIGRP (120.100.1.0/24, 150.100.1.0/24)
+
+(27) R2 -> 	UPDATE 		-> R1 ()
+(29) R1 -> 	UPDATE 		-> R3 ()
+(30) R1 -> 	UPDATE 		-> R2 ()
+(31) R3 -> 	UPDATE 		-> R1 ()
+(32) R2 -> 	HELLO(Ack) 	-> R1 ()
+
+(33) R2 -> 	UPDATE 		-> R1 (120.100.25.0/24, 150.100.2.0/24, 120.100.0.0/22)
+(35) R1 -> 	UPDATE		-> MULTICAST_EIGRP (150.100.1.0/24, 120.100.1.0/24)
+(36) R1 -> 	HELLO(Ack) 	-> R2 ()
+(37) R2 -> 	HELLO(Ack) 	-> R1 ()
+
+(38) R2 -> 	UPDATE 		-> MULTICAST_EIGRP (150.100.1.0/24)
+(39) R1 -> 	HELLO(Ack) 	-> R2 ()
+
+(41) R1 -> 	UPDATE 		-> MULTICAST_EIGRP (120.100.25.0/24, 150.100.2.0/24, 120.100.0.0/22)
+(42) R2 -> 	HELLO(Ack) 	-> R1 ()
+
+(43) R1 -> 	UPDATE 		-> R3 ()
+(44) R3 -> 	UPDATE 		-> R1 ()
+(45) R1 -> 	UPDATE 		-> R3 (150.100.1.0/24, 120.100.1.0/24)
+(46) R1 -> 	HELLO(Ack) 	-> R3 ()
+(47) R3 -> 	HELLO(Ack) 	-> R1 ()
+
+(48) R3 -> 	UPDATE 		-> R1 (0.0.0.0/0, 220.100.34.0/24, 120.100.3.0/24, 120.100.4.0/24, 120.100.5.0/24, 120.100.6.0/24, 
+							220.100.45.0/24, 220.100.44.0/22, 120.100.4.0/22, 150.100.3.0/24)
+(49) R1 -> 	UPDATE		-> R3 (120.100.25.0/24, 150.100.2.0/24, 120.100.0.0/22)
+(50) R1 -> 	HELLO(Ack) 	-> R3 ()
+(51) R3 -> 	HELLO(Ack) 	-> R1 ()
+
+(52) R1 -> 	UPDATE		-> R3 (150.100.1.0/24, 120.100.1.0/24)
+(53) R3 -> 	HELLO(Ack) 	-> R1 ()
+
+(55) R1 -> 	UPDATE 		-> MULTICAST_EIGRP (0.0.0.0/0, 220.100.34.0/24, 120.100.3.0/24, 120.100.4.0/24, 120.100.5.0/24, 120.100.6.0/24, 
+							220.100.45.0/24, 220.100.44.0/22, 120.100.4.0/22, 150.100.3.0/24)
+(56) R1 -> 	UPDATE 		-> R3 (0.0.0.0/0, 220.100.34.0/24, 120.100.3.0/24, 120.100.4.0/24, 120.100.5.0/24, 120.100.6.0/24, 
+							220.100.45.0/24, 220.100.44.0/22, 120.100.4.0/22, 150.100.3.0/24)
+
+(57) R2 -> 	HELLO(Ack) 	-> R1 ()
+(58) R3 -> 	HELLO(Ack) 	-> R1 ()
+
+
+
